@@ -1,0 +1,18 @@
+[package]
+name = "beacon_tests"
+version = "0.1.0"
+edition = "2021"
+
+[dev-dependencies]
+beacon = { path = "../beacon" }
+client = { path = "../client" }
+server = {path = "../server"}
+
+[[test]]
+name = "integration_tests"
+path = "src/integration_tests.rs"
+
+
+
+
+

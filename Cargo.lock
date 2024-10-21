@@ -3,5 +3,22 @@
 version = 3
 
 [[package]]
+name = "beacon"
+version = "0.1.0"
+
+[[package]]
+name = "beacon_tests"
+version = "0.1.0"
+dependencies = [
+ "beacon",
+ "client",
+ "server",
+]
+
+[[package]]
 name = "client"
+version = "0.1.0"
+
+[[package]]
+name = "server"
 version = "0.1.0"
