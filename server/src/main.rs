@@ -5,8 +5,7 @@ use beacon::{
 
 #[tokio::main]
 async fn main() {
-    let server_conn =
-        ConnectionType::WebSocket(WebSocketConnection::new("localhost".to_owned(), 1001));
+    let server_conn = ConnectionType::WebSocket(WebSocketConnection::new("localhost".to_owned()));
     let mut server = Server {
         connection: server_conn,
     };

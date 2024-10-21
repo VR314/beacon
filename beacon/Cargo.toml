@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 tokio = { workspace = true }
 tokio-tungstenite.workspace = true
+futures-util.workspace = true
+futures-channel = "0.3"

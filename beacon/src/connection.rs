@@ -12,19 +12,18 @@ pub trait Connection {
 }
 
 pub struct WebSocketConnection {
-    pub address: String,
-    pub port: u32,
+    pub url: String,
 }
 
 impl WebSocketConnection {
-    pub fn new(address: String, port: u32) -> Self {
-        Self { address, port }
+    pub fn new(url: String) -> Self {
+        Self { url }
     }
 }
 
 impl Connection for WebSocketConnection {
     fn connect(&mut self) -> Result<(), io::Error> {
-        println!("Connecting to {}:{}", self.address, self.port);
+        println!("Connecting to WS at {}", self.url);
         // TODO: connect to web socket
         Ok(())
     }
