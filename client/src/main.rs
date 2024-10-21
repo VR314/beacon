@@ -1,4 +1,7 @@
-use beacon::{self, Client, ConnectionType, WebSocketConnection};
+use beacon::{
+    client::Client,
+    connection::{ConnectionType, WebSocketConnection},
+};
 
 #[tokio::main]
 async fn main() {
