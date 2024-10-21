@@ -1,11 +1,24 @@
+use std::io;
 pub struct Client {
-    connection: ConnectionType,
+    pub connection: ConnectionType,
     // TODO: make an async function run() to actually run the client
 }
 
+impl Client {
+    pub async fn run(&mut self) {
+        println!("Client running!")
+    }
+}
+
 pub struct Server {
-    connection: ConnectionType,
+    pub connection: ConnectionType,
     // TODO: make an async function run() to actually run the client
+}
+
+impl Server {
+    pub async fn run(&mut self) {
+        println!("Server running!")
+    }
 }
 
 // This is used to abstract the client and server to use different types of connections in a
@@ -16,20 +29,25 @@ pub enum ConnectionType {
 }
 
 pub trait Connection {
-    fn connect(&mut self);
+    fn connect(&mut self) -> Result<(), io::Error>;
 }
 
 pub struct WebSocketConnection {
-    address: String,
-    port: u32,
-    connected: bool,
+    pub address: String,
+    pub port: u32,
+}
+
+impl WebSocketConnection {
+    pub fn new(address: String, port: u32) -> Self {
+        Self { address, port }
+    }
 }
 
 impl Connection for WebSocketConnection {
-    fn connect(&mut self) {
+    fn connect(&mut self) -> Result<(), io::Error> {
         println!("Connecting to {}:{}", self.address, self.port);
         // TODO: connect to web socket
-        self.connected = true;
+        Ok(())
     }
 }
 
