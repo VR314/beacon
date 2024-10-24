@@ -53,6 +53,12 @@ async fn read_stdin(tx: futures_channel::mpsc::UnboundedSender<Message>) {
             Ok(n) => n,
         };
         buf.truncate(n);
-        tx.unbounded_send(Message::binary(buf)).unwrap();
+        // Convert the buffer to a String
+        if let Ok(text) = String::from_utf8(buf) {
+            // Send the text as a WebSocket text message
+            tx.unbounded_send(Message::text(text)).unwrap();
+        } else {
+            eprintln!("Received invalid UTF-8 input");
+        }
     }
 }

@@ -11,3 +11,5 @@
 The commanding server is meant to accepts packets using the Beacon Packet Protocol (defined later), to run registered command handler functions.
 
 The telemetry server is meant to periodically flush telemetry data in the BPP, with flexiblity in packetization and rate of flushing.
+
+The current implementation connects the two servers over IPC, and then performs the commanding and telemetry logic.
