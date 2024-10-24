@@ -13,3 +13,18 @@ The commanding server is meant to accepts packets using the Beacon Packet Protoc
 The telemetry server is meant to periodically flush telemetry data in the BPP, with flexiblity in packetization and rate of flushing.
 
 The current implementation connects the two servers over IPC, and then performs the commanding and telemetry logic.
+
+## Organization
+```
+├── beacon
+├── client
+├── server
+└── beacon_tests
+```
+
+`beacon` holds the core code, and is the crate that is meant to be used when integrating `beacon` into a codebase.
+
+`client` is an example client binary, and `server` is a corresponding server binary.
+
+`beacon_tests` holds integration tests, where a client and server are spooled up and talk to each other during the tests.
+
