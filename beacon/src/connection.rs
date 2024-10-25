@@ -2,6 +2,8 @@ use std::io;
 
 // This is used to abstract the client and server to use different types of connections in a
 // plug-and-play fashion.
+
+#[derive(Clone, Debug)]
 pub enum ConnectionType {
     WebSocket(WebSocketConnection),
     // IPC(IPCConnection),
@@ -11,6 +13,7 @@ pub trait Connection {
     fn connect(&mut self) -> Result<(), io::Error>;
 }
 
+#[derive(Clone, Debug)]
 pub struct WebSocketConnection {
     pub url: String,
 }

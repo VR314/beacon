@@ -17,9 +17,11 @@ macro_rules! init {
         ]
     ) => {
         {
-            use beacon::BeaconTypes;
-            use beacon::ChannelPermissions;
-            // Create channels
+            // TODO: introduce checking for:
+            //      - all channel names are unique
+            //      - packets are smaller than the max packet size
+            //      - etc.
+
             let channels: Vec<Box<beacon::Channel>> = vec![
                 $(
                 Box::new(beacon::Channel {
@@ -31,7 +33,7 @@ macro_rules! init {
                 ),*
             ];
 
-            // Create a map for quick lookup by name
+
             let mut channel_map = std::collections::HashMap::new();
             $(
                 channel_map.insert($ch_name, Box::new(beacon::Channel {
@@ -42,7 +44,6 @@ macro_rules! init {
                 }));
             )*
 
-            // Create packets
             let packets: Vec<beacon::Packet> = vec![
                 $(
                     beacon::Packet {
@@ -53,7 +54,6 @@ macro_rules! init {
                 ),*
             ];
 
-            // Create a map for quick lookup by name
             let mut packet_map = std::collections::HashMap::new();
             $(
                 packet_map.insert($pkt_name, Box::new(beacon::Packet {

@@ -7,6 +7,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::RwLock;
+use tokio::time::{self, Duration, Interval};
 use tokio_tungstenite::tungstenite::Message;
 
 /// The HashMap that holds global state for the program. Telemetry is pulled from this, and commands can modify these.
@@ -15,6 +16,9 @@ static MAP: Lazy<Arc<RwLock<HashMap<String, Box<dyn Any + Send + Sync>>>>> = Laz
     println!("Initializing MAP");
     Arc::new(RwLock::new(HashMap::new()))
 });
+
+pub static INTERVAL: Lazy<Arc<RwLock<Interval>>> =
+    Lazy::new(|| Arc::new(RwLock::new(time::interval(Duration::from_millis(100)))));
 
 pub async fn get_value<V: 'static + Clone>(key: String) -> Option<V> {
     let map_r = MAP.read().await;
@@ -38,6 +42,7 @@ pub async fn insert_value<V: 'static + Send + Sync>(key: String, value: V) {
     map_w.insert(key, Box::new(value));
 }
 
+#[derive(Clone, Debug)]
 pub struct Server {
     pub connection: ConnectionType,
 }
@@ -64,6 +69,12 @@ impl Server {
         while let Ok((stream, _)) = listener.accept().await {
             tokio::spawn(accept_connection(stream));
         }
+    }
+
+    pub async fn run_tlm(&self) {
+        println!("Flushing tlm now!");
+        let mut interval = INTERVAL.write().await;
+        interval.tick().await;
     }
 }
 

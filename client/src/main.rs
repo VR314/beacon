@@ -5,6 +5,7 @@ use beacon::{
     BeaconTypes::*,
     ChannelPermissions::*,
 };
+
 #[tokio::main]
 async fn main() {
     let client_conn =
