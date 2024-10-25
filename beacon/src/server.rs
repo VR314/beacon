@@ -1,19 +1,20 @@
 use crate::connection::{ConnectionType, WebSocketConnection};
 
-use futures_util::{future, SinkExt, StreamExt};
+use futures_util::{SinkExt, StreamExt};
+use once_cell::sync::Lazy;
+use std::any::Any;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::RwLock;
-use tokio_tungstenite::{accept_async, tungstenite::Message};
+use tokio_tungstenite::tungstenite::Message;
 
-use once_cell::sync::Lazy;
-
-pub static MAP: Lazy<Arc<RwLock<HashMap<String, Box<dyn std::any::Any + Send + Sync>>>>> =
-    Lazy::new(|| {
-        println!("Initializing MAP");
-        Arc::new(RwLock::new(HashMap::new()))
-    });
+/// The HashMap that holds global state for the program. Telemetry is pulled from this, and commands can modify these.
+/// The HashMap has String keys (akin to the name of the data channel), and `std::any::Any` as values, which get downcasted to the desired type in the `get_value` function.
+static MAP: Lazy<Arc<RwLock<HashMap<String, Box<dyn Any + Send + Sync>>>>> = Lazy::new(|| {
+    println!("Initializing MAP");
+    Arc::new(RwLock::new(HashMap::new()))
+});
 
 pub async fn get_value<V: 'static + Clone>(key: String) -> Option<V> {
     let map_r = MAP.read().await;
@@ -23,6 +24,7 @@ pub async fn get_value<V: 'static + Clone>(key: String) -> Option<V> {
         Some(t) => {
             let dc = t.downcast_ref::<V>();
             match dc {
+                // Clone the value from the HashMap and return it
                 Some(v) => Some((*v).clone()),
                 None => None,
             }
@@ -81,7 +83,6 @@ async fn accept_connection(stream: TcpStream) {
     while let Some(msg) = read.next().await {
         match msg {
             Ok(Message::Text(text)) => {
-                // Call handle_command for text messages
                 let response = handle_command(text).await;
                 if let Err(e) = write.send(Message::Text(response)).await {
                     eprintln!("Error sending message: {}", e);
@@ -89,17 +90,13 @@ async fn accept_connection(stream: TcpStream) {
                 }
             }
             Ok(Message::Binary(bin)) => {
-                // Handle binary messages (if needed)
                 println!("Received binary data: {:?}", bin);
-                // You can choose how to handle binary data here
             }
             Ok(Message::Close(_)) => {
-                // Handle close messages
                 println!("Connection closed by peer: {}", addr);
                 break;
             }
             Err(e) => {
-                // Handle errors
                 eprintln!("Error reading message: {}", e);
                 break;
             }
